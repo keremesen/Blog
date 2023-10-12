@@ -1,15 +1,15 @@
 import React from "react";
 import { GrClose } from "react-icons/gr";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { modalFunc } from "../redux/modalSlice";
 import { postBlogs } from "../redux/blogSlice";
-import { AppDispatch } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 import { toast } from "react-toastify";
 const { v4: uuidv4 } = require("uuid");
 
 const Modal = () => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const { error } = useSelector((state: RootState) => state.blogs);
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const title = e.target[0].value;
@@ -19,16 +19,26 @@ const Modal = () => {
     e.target[0].value = "";
     e.target[1].value = "";
     dispatch(modalFunc());
-    toast.success("Blog added succesfully!", {
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    if (error) {
+      toast.error("Blog not added!", {
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } else {
+      toast.success("Blog added succesfully!", {
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
   };
-
   return (
     <div className="fixed inset-0 flex items-center justify-center">
       <div className="bg-black bg-opacity-40 absolute inset-0"></div>

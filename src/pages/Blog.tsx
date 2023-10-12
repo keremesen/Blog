@@ -13,7 +13,7 @@ const Blog = () => {
   const params = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { singleBlog, loading } = useSelector(
+  const { singleBlog, loading, error } = useSelector(
     (state: RootState) => state.blogs
   );
 
@@ -33,21 +33,42 @@ const Blog = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch(deleteBlogs({ id: params.id }));
-        navigate("/");
-        toast.success("Blog deleted succesfully!", {
-          position: "bottom-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        if (error) {
+          toast.error("Blog not deleted!", {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.success("Blog deleted succesfully!", {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          navigate("/");
+        }
       }
     });
   };
 
-  if (Object.keys(singleBlog).length === 0) {
+  if (Object.keys(singleBlog).length === 0 && loading === false) {
     return <NotFound />;
+  }
+  if (error) {
+    toast.error(error, {
+      position: "bottom-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   }
 
   return (
@@ -60,29 +81,34 @@ const Blog = () => {
           <IoArrowBackOutline size={24} />
         </button>
       </div>
-      <div className="flex max-md:flex-col w-3/4 h-3/4 bg-white rounded-lg shadow-xl p-8">
-        <img
-          src="https://images.pexels.com/photos/8797307/pexels-photo-8797307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt="blog"
-          className="w-full md:w-1/3 h-4/5 rounded-lg object-cover"
-        />
-        <div className="flex flex-col flex-1 p-4">
-          {loading && <Spinner />}
-          <h1 className=" text-xl md:text-4xl font-bold mb-4 break-words ">
-            {singleBlog.title}
-          </h1>
-          <p className=" text-base md:text-lg text-gray-800 mb-4 break-words">
-            {singleBlog.content}
-          </p>
-          <div className="mt-auto">
-            <button
-              className="bg-red-500 hover:bg-red-600 text-white rounded-md py-2 px-4 transition duration-300 ease-in-out transform hover:scale-105 float-right"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
+      <div className="flex max-md:flex-col w-3/4 min-h-[524px] bg-white rounded-lg shadow-xl p-8">
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            <img
+              src="https://images.pexels.com/photos/8797307/pexels-photo-8797307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+              alt="blog"
+              className="w-full md:w-1/3 h-4/5 rounded-lg object-cover"
+            />
+            <div className="flex flex-col flex-1 p-4">
+              <h1 className=" text-xl md:text-4xl font-bold mb-4 break-words ">
+                {singleBlog.title}
+              </h1>
+              <p className=" text-base md:text-lg text-gray-800 mb-4 break-words">
+                {singleBlog.content}
+              </p>
+              <div className="mt-auto">
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white rounded-md py-2 px-4 transition duration-300 ease-in-out transform hover:scale-105 float-right"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
