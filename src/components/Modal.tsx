@@ -1,15 +1,14 @@
 import React from "react";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { GrClose } from "react-icons/gr";
-import { useDispatch, useSelector } from "react-redux";
 import { modalFunc } from "../redux/modalSlice";
 import { postBlogs } from "../redux/blogSlice";
-import { AppDispatch, RootState } from "../redux/store";
 import { toast } from "react-toastify";
 const { v4: uuidv4 } = require("uuid");
 
 const Modal = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { error } = useSelector((state: RootState) => state.blogs);
+  const dispatch = useAppDispatch();
+  const { error } = useAppSelector((state) => state.blogs);
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const title = e.target[0].value;

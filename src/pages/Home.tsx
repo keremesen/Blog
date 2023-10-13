@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { AppDispatch } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { fetchBlogs, searchBlogFunc } from "../redux/blogSlice";
 import BlogCard from "../components/BlogCard";
 import { modalFunc } from "../redux/modalSlice";
@@ -11,11 +9,11 @@ import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 
 const Home = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { blogs, loading, error, keyword } = useSelector(
-    (state: RootState) => state.blogs
+  const dispatch = useAppDispatch();
+  const { blogs, loading, error, keyword } = useAppSelector(
+    (state) => state.blogs
   );
-  const { modal } = useSelector((state: RootState) => state.modal);
+  const { modal } = useAppSelector((state) => state.modal);
 
   useEffect(() => {
     dispatch(fetchBlogs());
@@ -26,7 +24,7 @@ const Home = () => {
   );
 
   if (error) {
-     toast.error(error, {
+    toast.error(error, {
       position: "bottom-center",
       autoClose: 3000,
       hideProgressBar: false,
@@ -38,7 +36,7 @@ const Home = () => {
 
   return (
     <main className="flex flex-col flex-1 items-center bg-zinc-50">
-      <div className="flex items-center justify-end px-4 w-full my-4 lg:w-1/2">
+      <div className="flex items-center justify-center  w-full my-4 lg:w-1/2">
         <div className="relative w-2/3 md:w-1/2">
           <input
             className="w-full h-10 px-4 py-2 border rounded-lg border-zinc-500 text-zinc-800 outline-none placeholder-zinc-500"

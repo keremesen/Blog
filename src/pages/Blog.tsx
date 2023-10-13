@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteBlogs, fetchSingleBlog } from "../redux/blogSlice";
-import { AppDispatch, RootState } from "../redux/store";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -11,11 +10,9 @@ import NotFound from "./NotFound";
 
 const Blog = () => {
   const params = useParams();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { singleBlog, loading, error } = useSelector(
-    (state: RootState) => state.blogs
-  );
+  const { singleBlog, loading, error } = useAppSelector((state) => state.blogs);
 
   useEffect(() => {
     dispatch(fetchSingleBlog({ id: params.id }));
