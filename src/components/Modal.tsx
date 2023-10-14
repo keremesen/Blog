@@ -1,24 +1,24 @@
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { GrClose } from "react-icons/gr";
-import { modalFunc } from "../redux/modalSlice";
-import { postBlogs } from "../redux/blogSlice";
+import { useAddBlogMutation } from "../app/features/blog/blogsApi";
+import { modalFunc } from "../app/features/modal/modalSlice";
+import { useAppDispatch } from "../app/hooks";
 import { toast } from "react-toastify";
+import { GrClose } from "react-icons/gr";
 const { v4: uuidv4 } = require("uuid");
 
 const Modal = () => {
   const dispatch = useAppDispatch();
-  const { error } = useAppSelector((state) => state.blogs);
+  const [addBlog, { isError }] = useAddBlogMutation();
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const title = e.target[0].value;
     const content = e.target[1].value;
 
-    dispatch(postBlogs({ id: uuidv4(), title, content }));
+    addBlog({ id: uuidv4(), title, content });
     e.target[0].value = "";
     e.target[1].value = "";
-    dispatch(modalFunc());
-    if (error) {
+    if (isError) {
       toast.error("Blog not added!", {
         position: "bottom-center",
         autoClose: 3000,
@@ -37,6 +37,7 @@ const Modal = () => {
         draggable: true,
       });
     }
+    dispatch(modalFunc());
   };
   return (
     <div className="fixed inset-0 flex items-center justify-center">

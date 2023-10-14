@@ -1,22 +1,23 @@
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteBlogs, fetchSingleBlog } from "../redux/blogSlice";
+
 import { IoArrowBackOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import Spinner from "../components/Spinner";
 import NotFound from "./NotFound";
+import {
+  useDeleteBlogMutation,
+  useFetchSingleBlogQuery,
+} from "../app/features/blog/blogsApi";
 
 const Blog = () => {
   const params = useParams();
-  const dispatch = useAppDispatch();
+  const { data, isLoading, isError } = useFetchSingleBlogQuery(
+    String(params.id)
+  );
+  const [deleteBlog] = useDeleteBlogMutation();
   const navigate = useNavigate();
-  const { singleBlog, loading, error } = useAppSelector((state) => state.blogs);
-
-  useEffect(() => {
-    dispatch(fetchSingleBlog({ id: params.id }));
-  }, [dispatch, params.id]);
 
   const handleDelete = () => {
     Swal.fire({
@@ -29,8 +30,8 @@ const Blog = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(deleteBlogs({ id: params.id }));
-        if (error) {
+        deleteBlog(String(params.id));
+        if (isError) {
           toast.error("Blog not deleted!", {
             position: "bottom-center",
             autoClose: 3000,
@@ -54,18 +55,8 @@ const Blog = () => {
     });
   };
 
-  if (Object.keys(singleBlog).length === 0 && loading === false) {
+  if (isError) {
     return <NotFound />;
-  }
-  if (error) {
-    toast.error(error, {
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
   }
 
   return (
@@ -79,7 +70,7 @@ const Blog = () => {
         </button>
       </div>
       <div className="flex max-md:flex-col w-3/4 min-h-[524px] bg-white rounded-lg shadow-xl p-8">
-        {loading ? (
+        {isLoading ? (
           <Spinner />
         ) : (
           <>
@@ -90,10 +81,10 @@ const Blog = () => {
             />
             <div className="flex flex-col flex-1 p-4">
               <h1 className=" text-xl md:text-4xl font-bold mb-4 break-words ">
-                {singleBlog.title}
+                {data?.title}
               </h1>
               <p className=" text-base md:text-lg text-gray-800 mb-4 break-words">
-                {singleBlog.content}
+                {data?.content}
               </p>
               <div className="mt-auto">
                 <button

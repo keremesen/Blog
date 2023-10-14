@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 interface BlogCardProps {
   data: {
-    id: number;
+    id: string;
     title: string;
     content: string;
   };

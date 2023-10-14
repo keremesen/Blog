@@ -1,30 +1,26 @@
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { fetchBlogs, searchBlogFunc } from "../redux/blogSlice";
+import React from "react";
 import BlogCard from "../components/BlogCard";
-import { modalFunc } from "../redux/modalSlice";
 import Modal from "../components/Modal";
-import { MdPostAdd } from "react-icons/md";
+import { modalFunc } from "../app/features/modal/modalSlice";
+import { searchBlogFunc } from "../app/features/blog/blogSlice";
+import { useFetchBlogsQuery } from "../app/features/blog/blogsApi";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Spinner from "../components/Spinner";
+import { MdPostAdd } from "react-icons/md";
 import { toast } from "react-toastify";
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const { blogs, loading, error, keyword } = useAppSelector(
-    (state) => state.blogs
-  );
+  const { data, isError, isLoading } = useFetchBlogsQuery();
+  const { keyword } = useAppSelector((state) => state.blogs);
   const { modal } = useAppSelector((state) => state.modal);
 
-  useEffect(() => {
-    dispatch(fetchBlogs());
-  }, [dispatch]);
-
-  const filteredBlog = blogs?.filter((blog) =>
+  let filteredBlog = data?.filter((blog) =>
     blog.title.toLowerCase().includes(keyword.toLowerCase())
   );
 
-  if (error) {
-    toast.error(error, {
+  if (isError) {
+    toast.error("Failed to fetch!", {
       position: "bottom-center",
       autoClose: 3000,
       hideProgressBar: false,
@@ -36,8 +32,8 @@ const Home = () => {
 
   return (
     <main className="flex flex-col flex-1 items-center bg-zinc-50">
-      <div className="flex items-center justify-center  w-full my-4 lg:w-1/2">
-        <div className="relative w-2/3 md:w-1/2">
+      <div className="flex items-center justify-center  w-full my-4 lg:w-1/2 ">
+        <div className="relative w-2/3 sm:w-1/3 lg:w-1/2 xl:w-1/3">
           <input
             className="w-full h-10 px-4 py-2 border rounded-lg border-zinc-500 text-zinc-800 outline-none placeholder-zinc-500"
             type="text"
@@ -54,7 +50,7 @@ const Home = () => {
         {modal && <Modal />}
       </div>
       <div className="flex flex-wrap items-center w-3/4 justify-center">
-        {loading ? (
+        {isLoading ? (
           <Spinner />
         ) : (
           filteredBlog?.map((blog) => <BlogCard key={blog.id} data={blog} />)
