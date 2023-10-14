@@ -60,7 +60,7 @@ const Blog = () => {
   }
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-gray-100">
+    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50">
       <div className="w-3/4 my-4">
         <button
           className=" hover:bg-zinc-200 text-black rounded-md py-2 px-4 transition duration-300 ease-in-out transform hover:scale-105"
